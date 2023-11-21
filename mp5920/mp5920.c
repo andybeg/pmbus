@@ -144,12 +144,13 @@ struct pmbus_cmd_desc {
 	/* from device (variable) */
 	u8		query;
 	struct pmbus_coefficients c[2];	/* 0 = w, 1 = r */
-};
+} dat;
 
 /* some of the command codes found in pmbus_cmd_desc.cmd;
  * these are specifically recognized in this code.
  */
 #define PMB_CLEAR_FAULT		0x03
+#define PMB_STORE_ALL		0x15
 #define PMB_CAPABILITY		0x19
 #define PMB_QUERY		    0x1a
 #define PMB_VOUT_MODE		0x20
@@ -232,23 +233,23 @@ static struct pmbus_cmd_desc pmbus_ops[] = {
 { .cmd = 0x15, .tag = "store_user_all", .type = W0, },
 { .cmd = PMB_CAPABILITY, .tag = "capability", .type = R1,
 		.flags = FLG_SHOW_P1, },
-{ .cmd = 0x35, .tag = "vin_on", .type = RW2, .units = VOLTS, },
-{ .cmd = 0x36, .tag = "vin_off", .type = RW2, .units = VOLTS, },
-{ .cmd = 0x39, .tag = "iout_cal_offset", .type = RW2, .units = AMPERES, },
-{ .cmd = 0x46, .tag = "iout_oc_fault_limit", .type = RW2, .units = AMPERES, },
-{ .cmd = 0x47, .tag = "iout_oc_fault_response", .type = RW1, },
+{ .cmd = 0x35, .tag = "vin_on                 Direct", .type = RW2, .units = VOLTS, },
+{ .cmd = 0x36, .tag = "vin_off                Direct", .type = RW2, .units = VOLTS, },
+{ .cmd = 0x39, .tag = "iout_cal_offset        Direct", .type = RW2, .units = AMPERES, },
+{ .cmd = 0x46, .tag = "iout_oc_fault_limit    Direct", .type = RW2, .units = AMPERES, },
+{ .cmd = 0x47, .tag = "iout_oc_fault_response Direct", .type = RW1, },
 
-{ .cmd = 0x4f, .tag = "ot_fault_limit", .type = RW2, .units = DEGREES_C,},
+{ .cmd = 0x4f, .tag = "ot_fault_limit         Direct", .type = RW2, .units = DEGREES_C,},
 
-{ .cmd = 0x50, .tag = "ot_fault_response", .type = RW1, },
-{ .cmd = 0x51, .tag = "ot_warn_limit", .type = RW2, .units = DEGREES_C,},
-{ .cmd = 0x55, .tag = "vin_ov_fault_limit", .type = RW2, .units = VOLTS, },
-{ .cmd = 0x5d, .tag = "iin_oc_warn_limit", .type = RW2, .units = AMPERES, },
-/*{ .cmd = 0x5e, .tag = "power_good_on", .type = RW2, .units = VOLTS, .flags = FLG_FORMAT_VOUT, },
-{ .cmd = 0x5f, .tag = "power_good_off", .type = RW2, .units = VOLTS, .flags = FLG_FORMAT_VOUT, },*/
+{ .cmd = 0x50, .tag = "ot_fault_response      Direct", .type = RW1, },
+{ .cmd = 0x51, .tag = "ot_warn_limit          Direct", .type = RW2, .units = DEGREES_C,},
+{ .cmd = 0x55, .tag = "vin_ov_fault_limit     Direct", .type = RW2, .units = VOLTS, },
+{ .cmd = 0x5d, .tag = "iin_oc_warn_limit      Direct", .type = RW2, .units = AMPERES, },
+/*{ .cmd = 0x5e, .tag = "power_good_on     Direct", .type = RW2, .units = VOLTS, .flags = FLG_FORMAT_VOUT, },
+{ .cmd = 0x5f, .tag = "power_good_off Direct", .type = RW2, .units = VOLTS, .flags = FLG_FORMAT_VOUT, },*/
 
-{ .cmd = 0x60, .tag = "ton_delay", .type = RW2, .units = MILLISECONDS, },
-{ .cmd = 0x6a, .tag = "pout_op_warn_limit", .type = RW2, .units = WATTS, },
+{ .cmd = 0x60, .tag = "ton_delay              Direct", .type = RW2, .units = MILLISECONDS, },
+{ .cmd = 0x6a, .tag = "pout_op_warn_limit     Direct", .type = RW2, .units = WATTS, },
 
 { .cmd = PMB_STATUS_BYTE, .tag = "status_byte", .type = R1,
 		.flags = FLG_STATUS, },
@@ -274,12 +275,12 @@ static struct pmbus_cmd_desc pmbus_ops[] = {
 { .cmd = PMB_STATUS_FANS_3_4, .tag = "status_fans_3_4", .type = R1,
 		.flags = FLG_STATUS, },
 
-{ .cmd = 0x86, .tag = "read_ein", .type = ENERGY, },
-{ .cmd = 0x88, .tag = "read_vin", .type = R2, .units = VOLTS, },
-/*{ .cmd = 0x8b, .tag = "read_vout", .type = R2, .units = VOLTS, .flags = FLG_FORMAT_VOUT, },*/
-{ .cmd = 0x8c, .tag = "read_iout", .type = R2, .units = AMPERES, },
-{ .cmd = 0x8d, .tag = "read_temperature_1", .type = R2, .units = DEGREES_C, },
-{ .cmd = 0x96, .tag = "read_pout", .type = R2, .units = WATTS, },
+{ .cmd = 0x86, .tag = "read_ein               Direct", .type = ENERGY, },
+{ .cmd = 0x88, .tag = "read_vin               Direct", .type = R2, .units = VOLTS, },
+/*{ .cmd = 0x8b, .tag = "read_vout Direct", .type = R2, .units = VOLTS, .flags = FLG_FORMAT_VOUT, },*/
+{ .cmd = 0x8c, .tag = "read_iout              Direct", .type = R2, .units = AMPERES, },
+{ .cmd = 0x8d, .tag = "read_temperature_1     Direct", .type = R2, .units = DEGREES_C, },
+{ .cmd = 0x96, .tag = "read_pout              Direct", .type = R2, .units = WATTS, },
 { .cmd = PMB_PMBUS_REVISION, .tag = "pmbus_revision", .type = R1,
 		.flags = FLG_SHOW_P1, },
 { .cmd = PMB_MFR_ID, .tag = "mfr_id", .type = RWB,
@@ -297,13 +298,13 @@ static struct pmbus_cmd_desc pmbus_ops[] = {
 { .cmd = PMB_APP_PROFILES, .tag = "app_profile_support",
 		.type = RWB_APP_PROFILE, .flags = FLG_SHOW_P1, },
 
-{ .cmd = 0xa0, .tag = "mfr_vin_min", .type = R2, .units = VOLTS, },
-{ .cmd = 0xa1, .tag = "mfr_vin_max", .type = R2, .units = VOLTS, },
-{ .cmd = 0xa4, .tag = "mfr_vout_min", .type = R2, .units = VOLTS, },
-{ .cmd = 0xa5, .tag = "mfr_vout_max", .type = R2, .units = VOLTS, },
-{ .cmd = 0xa5, .tag = "mfr_iout_max", .type = R2, .units = AMPERES, },
-{ .cmd = 0xa7, .tag = "mfr_pout_max", .type = R2, .units = WATTS, },
-{ .cmd = 0xa8, .tag = "mfr_tambient_max", .type = R2, .units = DEGREES_C, },
+{ .cmd = 0xa0, .tag = "mfr_vin_min            Direct", .type = R2, .units = VOLTS, },
+{ .cmd = 0xa1, .tag = "mfr_vin_max            Direct", .type = R2, .units = VOLTS, },
+{ .cmd = 0xa4, .tag = "mfr_vout_min           Direct", .type = R2, .units = VOLTS, },
+{ .cmd = 0xa5, .tag = "mfr_vout_max           Direct", .type = R2, .units = VOLTS, },
+{ .cmd = 0xa5, .tag = "mfr_iout_max           Direct", .type = R2, .units = AMPERES, },
+{ .cmd = 0xa7, .tag = "mfr_pout_max           Direct", .type = R2, .units = WATTS, },
+{ .cmd = 0xa8, .tag = "mfr_tambient_max       Direct", .type = R2, .units = DEGREES_C, },
 
 { .cmd = PMB_USER_DATA(0),  .tag = "user_data_00", .type = RW2, .units = BITS, },
 { .cmd = PMB_USER_DATA(1),  .tag = "user_data_01", .type = RW2, .units = BITS, },
@@ -326,9 +327,9 @@ static struct pmbus_cmd_desc pmbus_ops[] = {
 { .cmd = GPIO_CONFIG			, .tag = "GPIO_CONFIG", .type =  RW2,	 .units = BITS, },
 { .cmd = CLREF_DUTY_CYCLE		, .tag = "CLREF_DUTY_CYCLE", .type = RW1,  .units = BITS, },
 { .cmd = PMB_BLACK_BOX_PWD      , .tag = "PMB_BLACK_BOX_PWD", .type = RW2, .units = BITS, },
-{ .cmd = BLACK_BOX_VIN			, .tag = "BLACK_BOX_VIN", .type = ENERGY, },
-{ .cmd = BLACK_BOX_VOUT_AVG		, .tag = "BLACK_BOX_VOUT_AVG", .type = ENERGY, },
-{ .cmd = BLACK_BOX_VOUT_MAX		, .tag = "BLACK_BOX_VOUT_MAX", .type = ENERGY, },
+{ .cmd = BLACK_BOX_VIN			, .tag = "BLACK_BOX_VIN           Direct", .type = ENERGY, },
+{ .cmd = BLACK_BOX_VOUT_AVG		, .tag = "BLACK_BOX_VOUT_AVG      Direct", .type = ENERGY, },
+{ .cmd = BLACK_BOX_VOUT_MAX		, .tag = "BLACK_BOX_VOUT_MAX      Direct", .type = ENERGY, },
 { .cmd = BLACK_BOX_FAULTS		, .tag = "BLACK_BOX_FAULTS", .type = ENERGY, },
 { .cmd = BLACK_BOX_STATUS		, .tag = "BLACK_BOX_STATUS", .type = ENERGY, },
 { .cmd = BLACK_BOX_CONFIG		, .tag = "BLACK_BOX_CONFIG", .type =  RW2, .units = BITS, },
@@ -1116,7 +1117,7 @@ void status_byte(struct pmbus_dev *pmdev, u16 cmd, char *label, char *bits[])
 					label);
 		return;
 	}
-	printf("  %-21s %02x: ", label, value);
+	printf("  %-30s %02x: ", label, value);
 	showbits(value, 8, bits);
 	printf("\n");
 }
@@ -1377,15 +1378,15 @@ static double pmbus_to_vout_format(struct pmbus_dev *pmdev, const int value)
 
 static void pmbus_dev_show_commands(struct pmbus_dev *pmdev)
 {
-	unsigned		i;
+	unsigned		i, n=sizeof(pmbus_ops)/sizeof(dat);
 	struct pmbus_cmd_desc	*op;
 
 	printf("Supported Commands:\n");
-	for (i = 0; i < 255; i++) {
+	for (i = 0; i < n; i++) {
 		char			*format;
 		int			direct = 0;
 
-		op = pmdev->op[i];
+		op = &pmbus_ops[i];
 		if (op == &unsupported || !op)
 			continue;
 
@@ -1457,7 +1458,7 @@ static void pmbus_dev_show_commands(struct pmbus_dev *pmdev)
 		}
 
 		/* Now display it all */
-		printf("  %02x %-25s %c%c %s",
+		printf("  %02x %-30s %c%c %s",
 			op->cmd, op->tag,
 			(op->query & (1 << 5)) ? 'r' : ' ',
 			(op->query & (1 << 6)) ? 'w' : ' ',
@@ -1520,15 +1521,16 @@ static double pmbus_convert_from_direct(struct pmbus_cmd_desc *op, int value)
 
 static void pmbus_dev_show_values(struct pmbus_dev *pmdev)
 {
-	unsigned		i;
+	unsigned		i, n=sizeof(pmbus_ops)/sizeof(dat);
 	struct pmbus_cmd_desc	*op;
-
-	printf("Attribute Values: %d\n", sizeof(pmbus_ops));
-	for (i = 0; i < 75; i++) {
+	
+	printf("Attribute Values:\n");
+	for (i = 0; i < n; i++) {
 		int		value;
 		const char	*name;
  
 		op = &pmbus_ops[i];
+
 		name = op->tag;
 
 		if (op == &unsupported || !op){
@@ -1554,10 +1556,10 @@ static void pmbus_dev_show_values(struct pmbus_dev *pmdev)
 			
 			value = pmbus_read_byte_data(pmdev->fd, op->cmd);
 			if (value < 0) {
-				printf("  %-26s [ERROR reading]", name);
+				printf("  %-30s [ERROR reading]", name);
 				continue;
 			}
-			printf("  %-26s %02x: ", name, value);
+			printf("  %-30s   %02x: ", name, value);
 // FIXME need per-op (bitmask) decoders... 
 			printf("(BITMAP)");
 			printf("\n");
@@ -1569,7 +1571,7 @@ static void pmbus_dev_show_values(struct pmbus_dev *pmdev)
 				// FIXME display a diagnostic 
 				continue;
 			}*/
-			printf("  %-26s %04x: ", name, value);
+			printf("  %-30s %04x: ", name, value);
 // FIXME need decoders 
 			if (op->flags == FLG_FORMAT_VOUT && vout_mode_is_linear(pmdev)) {
 				printf("%g", pmbus_to_vout_format(pmdev, value));
@@ -1627,7 +1629,7 @@ static void pmbus_dev_show_values(struct pmbus_dev *pmdev)
 				}
 				d -= (double)op->c[1].b;
 				d /= (double)op->c[1].m;
-				printf("%g", d);
+				printf("%g %g", d, (double)op->c[1].m);
 				}
 				break;
 			case 4:
@@ -1652,7 +1654,7 @@ static void pmbus_dev_show_values(struct pmbus_dev *pmdev)
 			u16 accumulator = (buf[1] << 8) + buf[0];
 			u8 rollovers = buf[2];
 			unsigned int samples = (buf[5] << 16) + (buf[4] << 8) + buf[3];
-			printf("  %-26s %02x%02x%02x%02x%02x%02x: ", name, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5]);
+			printf("  %-30s %02x%02x%02x%02x%02x%02x: ", name, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5]);
 			switch ((op->query >> 2) & 7) {
 			case 0: {
 				// linear format 
@@ -1680,7 +1682,7 @@ static void pmbus_dev_show_values(struct pmbus_dev *pmdev)
 				}
 				energy_count = rollovers * max_value + pmbus_convert_from_direct(op, accumulator);
 				printf("%g", energy_count);
-				//printf(" [coeffs: m = %d, b = %d, R = %d]", op->c[1].m, op->c[1].b, op->c[1].R);
+				printf(" [coeffs: m = %d, b = %d, R = %d]", op->c[1].m, op->c[1].b, op->c[1].R);
 				}
 				break;
 			default:
@@ -1724,6 +1726,15 @@ static void pmbus_clear_fault(struct pmbus_dev *pmdev)
 	/* if we know we can't clear faults, don't try */
 	if (checksupport(pmdev, PMB_CLEAR_FAULT) != 0)
 		(void) smbus_write_byte(pmdev->fd, PMB_CLEAR_FAULT);
+}
+
+/*----------------------------------------------------------------------*/
+
+static void pmbus_store_all(struct pmbus_dev *pmdev)
+{
+	/* if we know we can't clear faults, don't try */
+	if (checksupport(pmdev, PMB_STORE_ALL) != 0)
+		(void) smbus_write_byte(pmdev->fd, PMB_STORE_ALL);
 }
 
 /*----------------------------------------------------------------------*/
@@ -1821,19 +1832,21 @@ static int pmbus_dev_scan(struct pmbus_dev *pmdev)
 }
 static void pmbus_write_word_reg(int fd, u16 cmd, char* label,u16 data){
 	int c;
-	c = pmbus_write_word_data(fd, cmd, data);
+	c = pmbus_read_word_data(fd, cmd);
 	if (c < 0) {
-		fprintf(stderr, "%s command failed: %s\n", label, strerror(c));
+		fprintf(stderr, " %s\n", strerror(c));
 	}else{
-		fprintf(stderr, "Write %s ok: ", label);
-		c = pmbus_read_word_data(fd, cmd);
-		if (c < 0) {
-			fprintf(stderr, " %s\n", strerror(c));
+		if(c!=data){
+			c = pmbus_write_word_data(fd, cmd, data);
+			if (c < 0) {
+				fprintf(stderr, "%s command failed: %s\n", label, strerror(c));
+			}else{
+				fprintf(stderr, "Write %s ok: \n", label);
+			}
 		}else{
-			fprintf(stderr, " 0x%X\n", c);
+			printf("Register %s allready setted\n", label);
 		}
 	}
-	
 }
 
 /*----------------------------------------------------------------------*/
@@ -1846,22 +1859,23 @@ static const unsigned long i2c_func_pmbus_min
 int main(int argc, char **argv)
 {
 	int			c,i;
-	struct pmbus_dev	dev;
-	char			*adapter = "/dev/i2c-0";
-	char			*addr_tail;
+	struct 		pmbus_dev	dev;
+	char		*adapter = "/dev/i2c-0";
+	char		*addr_tail;
 	int			addr = 0x40;
-	bool			clear = false;
-	bool			force = false;
-	bool			list = false;
-	bool			show = false;
-	bool			pmb_pwd = false;
-	bool			bb_pwd = false;
-	bool			nvm_pwd = false;
+	bool		clear = false;
+	bool		force = false;
+	bool		list = false;
+	bool		show = false;
+	bool		pmb_pwd = false;
+	bool		bb_pwd = false;
+	bool		nvm_pwd = false;
+	bool		store_user_all	= false;
 	u8			mfr_cmd = 0;
-	char			*page_str = NULL;
+	char		*page_str = NULL;
 	int			page = -1;
 
-	while ((c = getopt(argc, argv, "b:CfPBNg:lpsv"
+	while ((c = getopt(argc, argv, "b:CfSPBNg:lpsv"
 //#ifdef HACK
 			"m:"
 //#endif
@@ -1869,6 +1883,9 @@ int main(int argc, char **argv)
 		switch (c) {
 		case 'b':
 			adapter = optarg;
+			continue;
+		case 'S':
+			store_user_all = true;
 			continue;
 		case 'P':
 			pmb_pwd = true;
@@ -1951,7 +1968,7 @@ int main(int argc, char **argv)
 	/*
 	 * Set up a handle for the specified device on its bus.
 	 */
-	//memset(&dev, 0, sizeof dev);
+	memset(&dev, 0, sizeof dev);
 	dev.fd = open(adapter, O_RDWR);
 	if (dev.fd < 0) {
 		perror(adapter);
@@ -2055,6 +2072,10 @@ int main(int argc, char **argv)
 					c, mfr_cmd);
 	}
 //#endif
+	if(store_user_all){
+		pmbus_store_all(&dev);
+	}
+	//printf("sizeof %d\n", );
 
 	return 0;
 
@@ -2078,9 +2099,9 @@ usage:
 		"  -p               enable PEC, if the device supports it\n"
 		"  -s               show device status and attribute values\n"
 		"  -v               be more verbose\n"
-		"  -P				enable write registers"
-		"  -B				enable write registers"
-		"  -N				enable write registers"
+		"  -P               disable protection for the PMBus registers\n"
+		"  -B               allows the black box information stored in NVM to be read.\n"
+		"  -N               NVM password protects the NVM from accidental writes.\n"
 		, argv[0]);
 	return 1;
 }
